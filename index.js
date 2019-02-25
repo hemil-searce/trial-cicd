@@ -1,23 +1,20 @@
-const os = require('os');
 const express = require('express')
-const Request = require("request");
 const app = express()
-const http = require('http');
 
-console.log(os.hostname());
+/*
+    For the purpose of making the testing easier, we've just put this
+    in a seperate file.
+*/
+const myLib = require('./lib')
 
-app.get('/', function (req, res) {
-    res.statusCode = 503;
-    res.send(os.hostname());
-  });
+const commitRef = process.env.APP_COMMIT_REF || 'N/A'
+const buildDate = process.env.APP_BUILD_DATE || new Date().toISOString()
 
 
-app.get('/whoami',function(req,res) {
-   res.send("This is whomi context");
+app.get('/', (req, res) => {
+    const welcome = myLib.helloWorld()
+    const text = `${welcome}! We're at commit ${commitRef} which was built at ${buildDate}`
+    res.send(text)
 })
 
-
-app.listen(80, function () {
-  console.log('app listening on port 80!')
-})
-
+app.listen(3000, () => console.log('Example app listening on port 3000!'))
