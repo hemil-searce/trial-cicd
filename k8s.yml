@@ -8,7 +8,7 @@ spec:
   ports:
   - protocol: TCP
     port: 80
-    targetPort: 3000
+    targetPort: 90
   type: LoadBalancer
 ---
 apiVersion: apps/v1beta1
@@ -29,8 +29,8 @@ spec:
     spec:
       containers:
       - name: ${PROJECT_NAME}
-        image: eu.gcr.io/${GOOGLE_PROJECT_ID}/${PROJECT_NAME}:${CIRCLE_SHA1}
+        image: hemil/bestubu:8.0
         ports:
         - name: http
-          containerPort: 3000
+          containerPort: 80
           protocol: TCP
