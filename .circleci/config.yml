@@ -17,16 +17,19 @@ jobs:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
+      - run:
+          name: Run tests
+          command: npm test
       - store_test_results:
           path: test-results
   deploy_to_staging:
     docker:
       - image: google/cloud-sdk
     environment:
-      - PROJECT_NAME: "searce-sandbox"
-      - GOOGLE_PROJECT_ID: "searce-sandbox"
-      - GOOGLE_COMPUTE_ZONE: "asia-south1-a	"
-      - GOOGLE_CLUSTER_NAME: "hemil-cluster-1"
+      - PROJECT_NAME: "searce-playground"
+      - GOOGLE_PROJECT_ID: "searce-playground"
+      - GOOGLE_COMPUTE_ZONE: "asia-south1-a"
+      - GOOGLE_CLUSTER_NAME: "hemil-test-cluster"
     steps:
       - checkout
       - run: 
