@@ -7,7 +7,7 @@ jobs:
       - PROJECT_NAME: "searce-playground"
       - GOOGLE_PROJECT_ID: "searce-playground"
       - GOOGLE_COMPUTE_ZONE: "asia-south1-a"
-      - GOOGLE_CLUSTER_NAME: "es-cluster"
+      - GOOGLE_CLUSTER_NAME: "hemil-trial-cluster"
     steps:
       - checkout
       - run: 
