@@ -16,6 +16,7 @@ apiVersion: apps/v1beta1
 kind: Deployment
 metadata:
   name: ${PROJECT_NAME}
+  namespace: master
   labels:
     app: ${PROJECT_NAME}
 spec:
