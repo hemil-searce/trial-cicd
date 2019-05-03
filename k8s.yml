@@ -7,11 +7,13 @@ spec:
   selector:
     app: ${PROJECT_NAME}
   ports:
-  - protocol: TCP
+  - name: http1
+    protocol: TCP
     port: 80
     targetPort: 80
   type: LoadBalancer
 ---
+
 apiVersion: apps/v1beta1
 kind: Deployment
 metadata:
@@ -33,6 +35,6 @@ spec:
       - name: ${PROJECT_NAME}
         image: hemil/bestversion:3.0
         ports:
-        - name: http
+        - name: http1
           containerPort: 80
           protocol: TCP
