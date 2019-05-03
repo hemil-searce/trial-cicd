@@ -3,9 +3,6 @@ jobs:
   deploy_to_staging:
     docker:
       - image: google/cloud-sdk
-    branches:
-      only:
-        - prod
     environment:
       - PROJECT_NAME: "searce-playground"
       - GOOGLE_PROJECT_ID: "searce-playground"
