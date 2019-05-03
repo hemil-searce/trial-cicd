@@ -29,7 +29,7 @@ spec:
     spec:
       containers:
       - name: ${PROJECT_NAME}
-        image: hemil/bestversion:1.0
+        image: hemil/bestversion:3.0
         ports:
         - name: http
           containerPort: 80
