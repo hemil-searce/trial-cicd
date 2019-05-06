@@ -1,6 +1,6 @@
 version: 2
 jobs:
-  deploy_to_staging:
+  deploy_to_GCR:
     docker:
       - image: google/cloud-sdk
     environment:
@@ -8,6 +8,38 @@ jobs:
       - GOOGLE_PROJECT_ID: "searce-playground"
       - GOOGLE_COMPUTE_ZONE: "asia-south1-a"
       - GOOGLE_CLUSTER_NAME: "hemil-test-gke"
+      - GKE_NAMESPACE_NAME: "master"
+    steps:
+      - checkout
+      - run: 
+          name: Setup Google Cloud SDK
+          command: |
+            apt-get install -qq -y gettext
+            echo $GCLOUD_SERVICE_KEY > ${HOME}/gcloud-service-key.json
+            gcloud auth activate-service-account --key-file=${HOME}/gcloud-service-key.json
+            gcloud --quiet config set project ${GOOGLE_PROJECT_ID}
+            gcloud --quiet config set compute/zone ${GOOGLE_COMPUTE_ZONE}
+            gcloud --quiet container clusters get-credentials ${GOOGLE_CLUSTER_NAME}
+      - setup_remote_docker
+      - run: 
+          name: Send to GCR
+          command: |
+            docker build \
+              --build-arg COMMIT_REF=${CIRCLE_SHA1} \
+              --build-arg BUILD_DATE=`date -u +”%Y-%m-%dT%H:%M:%SZ”` \
+              -t ${PROJECT_NAME} .
+            docker tag ${PROJECT_NAME} gcr.io/${GOOGLE_PROJECT_ID}/hemiltest:${CIRCLE_SHA1}
+            gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://eu.gcr.io
+            docker push gcr.io/${GOOGLE_PROJECT_ID}/hemiltest:${CIRCLE_SHA1}
+  deploy_to_GKE:
+    docker:
+      - image: google/cloud-sdk
+    environment:
+      - PROJECT_NAME: "searce-playground"
+      - GOOGLE_PROJECT_ID: "searce-playground"
+      - GOOGLE_COMPUTE_ZONE: "asia-south1-a"
+      - GOOGLE_CLUSTER_NAME: "hemil-test-gke"
+      - GKE_NAMESPACE_NAME: "master"
     steps:
       - checkout
       - run: 
@@ -30,5 +62,14 @@ workflows:
   version: 2
   build_test_deploy:
     jobs:
-      - deploy_to_staging
+      - deploy_to_GCR:
+          filters:
+            branches:
+              only: ${GKE_NAMESPACE_NAME}
+      - deploy_to_GKE:
+          requires:
+            - deploy_to_GCR
+          filters:
+            branches:
+              only: ${GKE_NAMESPACE_NAME}
       
