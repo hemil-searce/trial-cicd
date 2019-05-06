@@ -33,7 +33,7 @@ jobs:
           command: |
             envsubst < ${HOME}/project/pearapi/pearapi_k8s.yml > ${HOME}/pearapi_patched_k8s.yml
             kubectl apply -f ${HOME}/pearapi_patched_k8s.yml
-            kubectl rollout status deployment/${PROJECT_NAME}      
+            kubectl rollout status deployment/pearapi-${PROJECT_NAME}      
   deploy_warehouse:
     docker:
       - image: google/cloud-sdk
@@ -67,7 +67,7 @@ jobs:
           command: |
             envsubst < ${HOME}/project/warehouse/warehouse_k8s.yml > ${HOME}/warehouse_patched_k8s.yml
             kubectl apply -f ${HOME}/warehouse_patched_k8s.yml
-            kubectl rollout status deployment/${PROJECT_NAME}
+            kubectl rollout status deployment/warehouse-${PROJECT_NAME}
 workflows:
   version: 2
   build_test_deploy:
