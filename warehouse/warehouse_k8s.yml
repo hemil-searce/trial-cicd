@@ -23,7 +23,7 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: warehouse-{PROJECT_NAME}
+      app: warehouse-${PROJECT_NAME}
   template:
     metadata:
       labels:
