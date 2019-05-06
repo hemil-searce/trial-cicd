@@ -61,8 +61,6 @@ workflows:
     jobs:
       - deploy_to_GCR
       - deploy_to_GKE:
-          requires:
-            - deploy_to_GCR
           filters:
             branches:
               only: ${GKE_NAMESPACE_NAME}
