@@ -31,7 +31,7 @@ jobs:
       - run: 
           name: Deploy to Kubernetes
           command: |
-            envsubst < ${HOME}/project/pearapi_k8s.yml > ${HOME}/pearapi_patched_k8s.yml
+            envsubst < ${HOME}/project/pearapi/pearapi_k8s.yml > ${HOME}/pearapi_patched_k8s.yml
             kubectl apply -f ${HOME}/pearapi_patched_k8s.yml
             kubectl rollout status deployment/${PROJECT_NAME}      
   deploy_warehouse:
@@ -65,7 +65,7 @@ jobs:
       - run: 
           name: Deploy to Kubernetes
           command: |
-            envsubst < ${HOME}/project/warehouse_k8s.yml > ${HOME}/warehouse_patched_k8s.yml
+            envsubst < ${HOME}/project/warehouse/warehouse_k8s.yml > ${HOME}/warehouse_patched_k8s.yml
             kubectl apply -f ${HOME}/warehouse_patched_k8s.yml
             kubectl rollout status deployment/${PROJECT_NAME}
 workflows:
