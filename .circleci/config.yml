@@ -24,9 +24,7 @@ jobs:
       - run: 
           name: Send to GCR
           command: |
-            docker build \
-              --build-arg BUILD_DATE=`date -u +”%Y-%m-%dT%H:%M:%SZ”` \
-              -t ${PROJECT_NAME} .
+            docker build -t ${PROJECT_NAME} .
             docker tag ${PROJECT_NAME} gcr.io/${GOOGLE_PROJECT_ID}/hemiltest:${CIRCLE_SHA1}
             gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://gcr.io
             docker push gcr.io/${GOOGLE_PROJECT_ID}/hemiltest:${CIRCLE_SHA1}
@@ -61,7 +59,10 @@ workflows:
   version: 2
   build_test_deploy:
     jobs:
-      - deploy_to_GCR
+      - deploy_to_GCR:
+          filters:
+            branches:
+              only: ${GKE_NAMESPACE_NAME}
       - deploy_to_GKE:
           requires:
             - deploy_to_GCR
