@@ -1,6 +1,6 @@
 version: 2.1
 jobs:
-  deploy_to_GCR:
+  deploy_pearapi:
     docker:
       - image: google/cloud-sdk
     environment:
@@ -24,11 +24,17 @@ jobs:
       - run: 
           name: Send to GCR
           command: |
-            docker build -t ${PROJECT_NAME} .
-            docker tag ${PROJECT_NAME} gcr.io/${GOOGLE_PROJECT_ID}/hemiltest:${CIRCLE_SHA1}
+            docker build -t ${PROJECT_NAME} pearapi/.
+            docker tag ${PROJECT_NAME} gcr.io/${GOOGLE_PROJECT_ID}/pearapi:${CIRCLE_SHA1}
             gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://gcr.io
-            docker push gcr.io/${GOOGLE_PROJECT_ID}/hemiltest:${CIRCLE_SHA1}
-  deploy_to_GKE:
+            docker push gcr.io/${GOOGLE_PROJECT_ID}/pearapi:${CIRCLE_SHA1}
+      - run: 
+          name: Deploy to Kubernetes
+          command: |
+            envsubst < ${HOME}/project/pearapi_k8s.yml > ${HOME}/pearapi_patched_k8s.yml
+            kubectl apply -f ${HOME}/pearapi_patched_k8s.yml
+            kubectl rollout status deployment/${PROJECT_NAME}      
+  deploy_warehouse:
     docker:
       - image: google/cloud-sdk
     environment:
@@ -36,7 +42,7 @@ jobs:
       - GOOGLE_PROJECT_ID: "searce-playground"
       - GOOGLE_COMPUTE_ZONE: "asia-south1-a"
       - GOOGLE_CLUSTER_NAME: "hemil-test-gke"
-      - GKE_NAMESPACE_NAME: "master"
+      - GKE_NAMESPACE_NAME: "prod"
     steps:
       - checkout
       - run: 
@@ -50,22 +56,27 @@ jobs:
             gcloud --quiet container clusters get-credentials ${GOOGLE_CLUSTER_NAME}
       - setup_remote_docker
       - run: 
+          name: Send to GCR
+          command: |
+            docker build -t ${PROJECT_NAME} warehouse/.
+            docker tag ${PROJECT_NAME} gcr.io/${GOOGLE_PROJECT_ID}/warehouse:${CIRCLE_SHA1}
+            gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://gcr.io
+            docker push gcr.io/${GOOGLE_PROJECT_ID}/warehouse:${CIRCLE_SHA1}
+      - run: 
           name: Deploy to Kubernetes
           command: |
-            envsubst < ${HOME}/project/k8s.yml > ${HOME}/patched_k8s.yml
-            kubectl apply -f ${HOME}/patched_k8s.yml
+            envsubst < ${HOME}/project/warehouse_k8s.yml > ${HOME}/warehouse_patched_k8s.yml
+            kubectl apply -f ${HOME}/warehouse_patched_k8s.yml
             kubectl rollout status deployment/${PROJECT_NAME}
 workflows:
   version: 2
   build_test_deploy:
     jobs:
-      - deploy_to_GCR:
+      - deploy_pearapi:
           filters:
             branches:
               only: prod
-      - deploy_to_GKE:
-          requires:
-            - deploy_to_GCR
+      - deploy_warehouse:
           filters:
             branches:
               only: prod

@@ -1,11 +1,11 @@
 kind: Service
 apiVersion: v1
 metadata:
-  name: ${PROJECT_NAME}
+  name: pearapi-${PROJECT_NAME}
   namespace: ${GKE_NAMESPACE_NAME}
 spec:
   selector:
-    app: ${PROJECT_NAME}
+    app: pearapi-${PROJECT_NAME}
   ports:
   - protocol: TCP
     port: 80
@@ -15,23 +15,23 @@ spec:
 apiVersion: apps/v1beta1
 kind: Deployment
 metadata:
-  name: ${PROJECT_NAME}
+  name: pearapi-${PROJECT_NAME}
   namespace: ${GKE_NAMESPACE_NAME}
   labels:
-    app: ${PROJECT_NAME}
+    app: pearapi-${PROJECT_NAME}
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
-      app: ${PROJECT_NAME}
+      app: pearapi-${PROJECT_NAME}
   template:
     metadata:
       labels:
-        app: ${PROJECT_NAME}
+        app: pearapi-${PROJECT_NAME}
     spec:
       containers:
-      - name: ${PROJECT_NAME}
-        image: gcr.io/${GOOGLE_PROJECT_ID}/hemiltest:${CIRCLE_SHA1}
+      - name: pearapi-${PROJECT_NAME}
+        image: gcr.io/${GOOGLE_PROJECT_ID}/pearapi:${CIRCLE_SHA1}
         ports:
         - name: http
           containerPort: 80
