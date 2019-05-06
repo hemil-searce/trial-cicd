@@ -24,9 +24,7 @@ jobs:
       - run: 
           name: Send to GCR
           command: |
-            docker build \
-            --build-arg BUILD_DATE=`date -u +”%Y-%m-%dT%H:%M:%SZ”` \
-            -t ${PROJECT_NAME} pearapi/.
+            docker build -t ${PROJECT_NAME} pearapi/.
             docker tag ${PROJECT_NAME} gcr.io/${GOOGLE_PROJECT_ID}/pearapi:${CIRCLE_SHA1}
             gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://gcr.io
             docker push gcr.io/${GOOGLE_PROJECT_ID}/pearapi:${CIRCLE_SHA1}
@@ -60,9 +58,7 @@ jobs:
       - run: 
           name: Send to GCR
           command: |
-            docker build \
-            --build-arg BUILD_DATE=`date -u +”%Y-%m-%dT%H:%M:%SZ”` \
-            -t ${PROJECT_NAME} warehouse/.
+            docker build -t ${PROJECT_NAME} warehouse/.
             docker tag ${PROJECT_NAME} gcr.io/${GOOGLE_PROJECT_ID}/warehouse:${CIRCLE_SHA1}
             gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://gcr.io
             docker push gcr.io/${GOOGLE_PROJECT_ID}/warehouse:${CIRCLE_SHA1}
