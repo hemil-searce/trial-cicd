@@ -75,8 +75,8 @@ workflows:
       - deploy_pearapi:
           filters:
             branches:
-              only: ${GKE_NAMESPACE_NAME}
+              only: prod
       - deploy_warehouse:
           filters:
             branches:
-              only: ${GKE_NAMESPACE_NAME}
+              only: prod
