@@ -8,7 +8,7 @@ jobs:
       - GOOGLE_PROJECT_ID: "searce-playground"
       - GOOGLE_COMPUTE_ZONE: "asia-south1-a"
       - GOOGLE_CLUSTER_NAME: "hemil-test-gke"
-      - GKE_NAMESPACE_NAME: "master"
+      - GKE_NAMESPACE_NAME: "prod"
     steps:
       - checkout
       - run: 
